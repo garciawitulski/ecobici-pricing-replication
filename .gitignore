@@ -1,0 +1,18 @@
+# raw data (about 1.2 GB; downloaded by code/stata/01_download_raw.do)
+data/raw/
+
+# intermediate files rebuilt from the raw data (several GB)
+data/intermediate/
+
+# logs are written on every run and contain local paths
+output/logs/
+
+# system and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+.Rhistory
+.RData
+.Rproj.user/
+.vscode/

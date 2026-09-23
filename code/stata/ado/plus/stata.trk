@@ -1,0 +1,279 @@
+* 00000007
+*! version 1.0.0
+* Do not erase or edit this file
+* It is used by Stata to track the ado and help
+* files you have installed.
+
+S http://fmwww.bc.edu/repec/bocode/f
+N ftools.pkg
+D 23 Sep 2026
+U 1
+d 'FTOOLS': module to provide alternatives to common Stata commands optimized for large datasets
+d 
+d  ftools consists of a Mata file and several Stata commands: The
+d Mata file creates identifiers (factors) from variables by using
+d hash functions instead of sorting the data, so it runs in time
+d O(N) and not in O(N log N). The Stata commands exploit this to
+d avoid sort operations,  at the cost of being slower for small
+d datasets (mainly because of the cost involved in moving data from
+d Stata to Mata). Implemented commands are fcollapse, fegen group,
+d and fsort. Note that most of the capabilities of levels and
+d contract are already supported by these commands. Possible
+d commands include more egen functions and merge and reshape
+d alternatives.
+d 
+d KW: levels
+d KW: collapse
+d KW: contract
+d KW: egen
+d KW: sort
+d KW: factor variables
+d KW: Mata
+d 
+d Requires: Stata version 11.2 (Stata 12 or older also require boottest from SSC)
+d 
+d Distribution-Date: 20260111
+d 
+d Author: Sergio Correia, Board of Governors of the Federal Reserve System
+d Support: email sergio.correia@@gmail.com
+d 
+f f\ftools.ado
+f f\ftools.mata
+f f\ftools.sthlp
+f f\fcollapse.ado
+f f\fcollapse.sthlp
+f f\fegen.ado
+f f\fegen_group.ado
+f f\fegen.sthlp
+f f\fisid.ado
+f f\fisid.sthlp
+f f\flevelsof.ado
+f f\flevelsof.sthlp
+f f\fmerge.ado
+f f\fmerge.sthlp
+f f\freshape.ado
+f f\fsort.ado
+f f\fsort.sthlp
+f f\ftab.ado
+f j\join.ado
+f j\join.sthlp
+f l\local_inlist.ado
+f l\local_inlist.sthlp
+f f\fcollapse_functions.mata
+f f\fcollapse_main.mata
+f f\ftools_type_aliases.mata
+f f\ftools.mata
+f f\ftools_common.mata
+f f\ftools_hash1.mata
+f f\ftools_main.mata
+f f\ftools_experimental.mata
+f f\ftools_plugin.mata
+f f\ftools_type_aliases.mata
+f m\ms_compile_mata.ado
+f m\ms_expand_varlist.ado
+f m\ms_fvstrip.ado
+f m\ms_fvstrip.sthlp
+f m\ms_fvunab.ado
+f m\ms_get_version.ado
+f m\ms_parse_absvars.ado
+f m\ms_parse_depvar.ado
+f m\ms_parse_varlist.ado
+f m\ms_parse_vce.ado
+f m\ms_add_comma.ado
+f p\parallel_map_template.do.ado
+f p\parallel_map.ado
+f p\parallel_map.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/r
+N reghdfe.pkg
+D 23 Sep 2026
+U 2
+d 'REGHDFE': module to perform linear or instrumental-variable regression absorbing any number of high-dimensional fixed effects
+d 
+d  reghdfe fits a linear or instrumental-variable regression
+d absorbing an arbitrary number of categorical factors and
+d factorial interactions Optionally, it saves the estimated fixed
+d effects.
+d 
+d KW: regression
+d KW: instrumental variables
+d KW: fixed effects
+d KW: high dimension fixed effects
+d 
+d Requires: Stata version 11.2 and ftools from SSC (q.v.)
+d 
+d Distribution-Date: 20260111
+d 
+d Author: Sergio Correia, Board of Governors of the Federal Reserve System
+d Support: email sergio.correia@@gmail.com
+d 
+d Author: Noah Constantine, Board of Governors of the Federal Reserve System
+d Support: email
+d 
+f r\reghdfe.ado
+f r\reghdfe.mata
+f r\reghdfe5.mata
+f r\reghdfe3.ado
+f r\reghdfe_p.ado
+f r\reghdfe3_p.ado
+f r\reghdfe5.ado
+f r\reghdfe5_p.ado
+f r\reghdfe_estat.ado
+f r\reghdfe3_estat.ado
+f r\reghdfe5_estat.ado
+f r\reghdfe5_parse.ado
+f r\reghdfe_footnote.ado
+f r\reghdfe3_footnote.ado
+f r\reghdfe5_footnote.ado
+f e\estfe.ado
+f r\reghdfe_header.ado
+f r\reghdfe5_header.ado
+f r\reghdfe5_parse.ado
+f r\reghdfe.sthlp
+f r\reghdfe3.sthlp
+f r\reghdfe5.sthlp
+f r\reghdfe.mata
+f r\reghdfe_programming.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/p
+N ppmlhdfe.pkg
+D 23 Sep 2026
+U 3
+d 'PPMLHDFE': module for Poisson pseudo-likelihood regression with multiple levels of fixed effects
+d 
+d   ppmlhdfe implements Poisson pseudo-maximum likelihood
+d regressions (PPML) with multi-way fixed effects, as  described
+d by Correia, Guimarães, Zylkin (arXiv:1903.01690).  The estimator
+d employed is robust to statistical separation and    convergence
+d issues, due to the procedures developed in Correia, Guimarães,
+d Zylkin (arXiv:1903.01633).
+d 
+d KW: Poisson pseudo-likelihood
+d KW: ppml
+d KW: fixed effects
+d KW: high dimension fixed effects
+d 
+d Requires: Stata version 13.1, reghdfe, ftools from SSC (q.v.)
+d 
+d Distribution-Date: 20260111
+d 
+d Author: Sergio Correia, Board of Governors of the Federal Reserve System
+d Support: email sergio.correia@@gmail.com
+d 
+d Author: Paulo Guimaraes, University of Porto
+d Support: email pguimaraes@@fep.up.pt
+d 
+d Author: Thomas Zylkin, University of Richmond
+d Support: email tzylkin@@richmond.edu
+d 
+f p\ppmlhdfe.ado
+f p\ppmlhdfe.sthlp
+f p\ppmlhdfe_header.ado
+f p\ppmlhdfe_p.ado
+f p\ppmlhdfe.mata
+f r\reghdfe5.mata
+f p\ppmlhdfe_functions.mata
+f p\ppmlhdfe_separation_relu.mata
+f p\ppmlhdfe_separation_simplex.mata
+e
+S http://fmwww.bc.edu/repec/bocode/h
+N honestdid.pkg
+D 23 Sep 2026
+U 5
+d 'HONESTDID': module implementing the HonestDiD R package
+d 
+d     Stata version of the HonestDiD R package, which implements
+d robust inference for difference-in-differences and event study
+d design    methods developed in Rambachan and Roth (2021). See the
+d examples section below for an illustration of how users can use
+d this   package to conduct sensitivity analysis on the parallel
+d trends assumption in difference-in-differences and event study
+d designs.
+d 
+d KW: DiD
+d KW: difference in differences
+d KW: parallel trends
+d 
+d Requires: Stata version 14.1
+d 
+d Distribution-Date: 20240322
+d 
+d Author: Mauricio Caceres Bravo, Brown University
+d Support: email mauricio.caceres.bravo@@gmail.com
+d 
+d Author: Jonathan Roth, Brown University
+d Support: email jonathan_roth@@brown.edu
+d 
+d Author: Ashesh Rambachan, MIT
+d Support: email ashesh.a.rambachan@@gmail.com
+d 
+f h\honestdid.ado
+f h\honestwork.ado
+f h\honestdid.sthlp
+f h\honestecos_macosx.plugin
+f h\honestecos_macosx86_64.plugin
+f h\honestecos_macosxarm64.plugin
+f h\honestecos_unix.plugin
+f h\honestecos_windows.plugin
+f h\honestosqp_macosx.plugin
+f h\honestosqp_macosx86_64.plugin
+f h\honestosqp_macosxarm64.plugin
+f h\honestosqp_unix.plugin
+f h\honestosqp_windows.plugin
+f l\lhonestdid.mlib
+e
+S http://fmwww.bc.edu/repec/bocode/r
+N require.pkg
+D 23 Sep 2026
+U 6
+d 'REQUIRE': module to ensure that installed packages have a minimum or exact version.
+d 
+d    Use require to help the reproductibility of your research, by
+d ensuring that people that run your code are using    compatible
+d versions of the packages you use (either minimum versions, of
+d exact versions).
+d 
+d KW: programming
+d KW: reproducibility
+d 
+d Requires: Stata version 14
+d 
+d Distribution-Date: 20230921
+d 
+d Author: Sergio Correia, Board of Governors of the Federal Reserve System
+d Support: email sergio.correia@@gmail.com
+d 
+d Author: Matthew P. Seay, Board of Governors of the Federal Reserve System
+d Support: email matt.seay@@frb.gov
+d 
+f r\require.ado
+f r\require.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/x
+N xtscc.pkg
+D 23 Sep 2026
+U 7
+d 'XTSCC': module to calculate robust standard errors for panels with cross-sectional dependence
+d 
+d  xtscc produces Driscoll and Kraay (Rev. Ec. Stat. 1998) standard
+d errors for coefficients  estimated by pooled OLS/WLS or
+d fixed-effects (within) regression.
+d 
+d KW:  robust standard errors
+d KW: panel
+d KW: cross-sectional dependence
+d KW: fixed effects
+d KW: pooled OLS
+d 
+d Requires: Stata version 9.2
+d 
+d Distribution-Date: 20180403
+d 
+d Author: Daniel Hoechle, University of Basel
+d Support: email  daniel.hoechle@@unibas.ch
+d 
+f x\xtscc.ado
+f x\xtscc_p.ado
+f x\xtscc.sthlp
+f x\xtscc_postestimation.hlp
+e

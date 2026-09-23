@@ -1,0 +1,30 @@
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccc@{}}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+ & \multicolumn{3}{c}{$\log(\text{trips})$} & Trips per day \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-5}
+\multicolumn{5}{@{}l}{\textit{Panel A. Main estimates}} \\
+Weekend $\times$ Post & $-$0.870$^{***}$ & $-$0.865$^{***}$ & $-$0.893$^{***}$ & $-$4,260$^{***}$ \\
+ & (0.105) & (0.116) & (0.126) & (592) \\
+Implied change (\%) & $-$58.1 & $-$57.9 & $-$59.1 & $-$45.0 \\
+\addlinespace[3pt]
+Week fixed effects & No & Yes & Yes & Yes \\
+Day-of-week fixed effects & No & Yes & Yes & Yes \\
+Weather controls & No & No & Yes & Yes \\
+Observations (days) & 106 & 106 & 106 & 106 \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Panel B. Alternative estimation windows, specification (3)}} \\
+ & $\pm$4 weeks & $\pm$6 weeks & $\pm$12 weeks & $\pm$16 weeks \\
+Weekend $\times$ Post & $-$1.144$^{***}$ & $-$0.976$^{***}$ & $-$0.870$^{***}$ & $-$0.880$^{***}$ \\
+ & (0.105) & (0.108) & (0.101) & (0.081) \\
+Observations (days) & 51 & 79 & 158 & 209 \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Panel C. Alternative inference, specification (3)}} \\
+Newey--West, lag of 7 days &  &  & (0.113) &  \\
+Newey--West, lag of 21 days &  &  & (0.134) &  \\
+Newey--West, lag of 28 days &  &  & (0.136) &  \\
+Clustered by week (16 clusters) &  &  & (0.126) &  \\
+Heteroskedasticity-robust (HC1) &  &  & (0.102) &  \\
+Wild cluster bootstrap-$t$, $p$-value &  &  & $<$0.001 &  \\
+\bottomrule
+\end{tabular*}

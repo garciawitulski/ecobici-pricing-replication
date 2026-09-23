@@ -1,0 +1,39 @@
+Code (main.do, main_figures.R, code/stata/*.do, code/r/*.R)
+----------------------------------------------------------
+
+MIT License
+
+Copyright (c) 2026 Christian M. García-Witulski and Mariano Rabassa
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+Derived data (data/analysis, data/manual)
+-----------------------------------------
+
+Released under the Creative Commons Attribution 4.0 International licence (CC BY 4.0),
+https://creativecommons.org/licenses/by/4.0/. They are built from raw data that remain under the
+licences of their providers (see README.md).
+
+
+Third-party packages (code/stata/ado)
+-------------------------------------
+
+The Stata packages in code/stata/ado belong to their authors and keep their own licences. They are
+included only so that the replication package runs with the versions used for the paper.

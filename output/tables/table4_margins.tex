@@ -1,0 +1,29 @@
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{4.60cm}*{4}{>{\centering\arraybackslash}p{2.30cm}}@{}}
+\toprule
+\multicolumn{5}{@{}l}{\textit{Panel A. Cohort means over windows of equal length}} \\
+ & \multicolumn{2}{c}{Weekends} & \multicolumn{2}{c}{Weekdays} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+ & Before & After & Before & After \\
+Days in the window & 15 & 15 & 37 & 37 \\
+Probability of any ride & 0.573 & 0.171 & 0.818 & 0.444 \\
+Trips per cohort member & 1.89 & 0.47 & 5.66 & 3.82 \\
+Trips per active rider & 3.30 & 2.72 & 6.92 & 8.59 \\
+Minutes per cohort member & 41.8 & 11.9 & 108.7 & 69.9 \\
+Minutes per active rider & 72.8 & 69.6 & 133.0 & 157.4 \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Panel B. Within-user difference in differences}} \\
+ & Any weekend ride & Weekend trips & Weekend minutes & Weekend trips, riders in both periods \\
+\cmidrule(lr){2-5}
+Weekend $\times$ Post & $-$0.029$^{***}$ & $-$1.008$^{***}$ & $-$0.812$^{***}$ & $-$0.330$^{***}$ \\
+ & (0.003) & (0.012) & (0.015) & (0.013) \\
+Estimator & Linear probability & Poisson & Poisson & Poisson \\
+Observations & 303,192 & 299,544 & 299,544 & 82,162 \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Panel C. Accounting decomposition of the weekend decline}} \\
+ & Total & Participation & Usage intensity among active riders & Participation share (\%) \\
+\cmidrule(lr){2-5}
+Trips & $-$1.008 & $-$0.598 & $-$0.410 & 59.4 \\
+Minutes ridden & $-$0.812 & $-$0.598 & $-$0.214 & 73.7 \\
+Active days & $-$0.947 & $-$0.598 & $-$0.349 & 63.2 \\
+\bottomrule
+\end{tabular*}
