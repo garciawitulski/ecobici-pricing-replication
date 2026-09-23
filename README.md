@@ -2,7 +2,7 @@
 
 **From Free to Paid Access: Participation Effects of a Bike-Share Pricing Reform**
 
-Christian M. García-Witulski and Mariano Rabassa
+Christian García-Witulski and Mariano Rabassa
 
 ## Overview
 
