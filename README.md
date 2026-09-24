@@ -12,8 +12,7 @@ of its public bike-share system (Ecobici), while weekday access stayed free for 
 compares weekend days with weekdays around that date.
 
 Data preparation, estimation and tables are written in **Stata** (`main.do`); figures are drawn in
-**R** (`main_figures.R`) from estimates saved by Stata. Running both from scratch takes about 1.5 hours
-on a standard laptop.
+**R** (`main_figures.R`) from estimates saved by Stata. 
 
 ## Data availability and provenance
 
