@@ -14,7 +14,7 @@ compares weekend days with weekdays around that date.
 Data preparation, estimation and tables are written in **Stata** (`main.do`); figures are drawn in
 **R** (`main_figures.R`) from estimates saved by Stata. 
 
-## Data availability and provenance
+## Data availability
 
 All data are public and were obtained from the sources below between 11 and 16 September 2026. The
 authors had legitimate access to all of them, and all may be redistributed under their licences. The
