@@ -19,8 +19,7 @@ Data preparation, estimation and tables are written in **Stata** (`main.do`); fi
 All data are public and were obtained from the sources below between 11 and 16 September 2026. The
 authors had legitimate access to all of them, and all may be redistributed under their licences. The
 raw files (about 1.2 GB) are not stored in this GitHub repository: `code/stata/01_download_raw.do`
-downloads them from the original sources and checks their size against the copies used for the paper,
-listed with their URLs and SHA-256 checksums in `data/manual/raw_files.csv`. The copies used for the
+downloads them from the sources. The copies used for the
 paper are included in the replication archive deposited with the journal.
 
 | Data | Provider | Files | Licence |
