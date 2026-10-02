@@ -1,110 +1,149 @@
 * 04_weather.do
-* Daily Buenos Aires weather 2019-2023 from NOAA NCEI.
+* Daily Buenos Aires weather 2019-2023 from the SMN (Servicio Meteorologico Nacional, Argentina).
 *
-* Input : data/raw/weather/ghcnd_AR000875850_BuenosAiresObservatorio.csv  GHCN-Daily, Observatorio (primary)
-*         data/raw/weather/ghcnd_ARM00087582_Aeroparque.csv               GHCN-Daily, Aeroparque (backup)
-*         data/raw/weather/gsod_87585099999_YYYY.csv                      GSOD, Observatorio
-*         data/raw/weather/gsod_87582099999_YYYY.csv                      GSOD, Aeroparque
+* CHANGE (2026-10-01, author-approved; CAF-007 in the project repository): this file replaces the
+* NOAA GHCN-Daily/GSOD construction. The SMN daily station records are complete over 2019-2023 for
+* both city stations, and the NOAA products dated TMAX and PRCP one calendar day later than the
+* SMN climatological day, so the previous controls paired the trips of day d with the previous
+* afternoon's maximum. The Observatorio is therefore the single source and no value is imputed.
+*
+* Input : data/raw/weather/smn_datos_meteorologicos_1991_2020.xlsx   daily data 1991-2020 (from the
+*             RAR archive of the same name; extract it next to the archive if not already done)
+*         data/raw/weather/smn_datos_meteorologicos_desde_2021.lst   daily data from 2021 (from
+*             Datos-diarios-2021-2026-01102026.zip; tab-separated, repeats its header mid-file)
+*         Both were downloaded manually from the SMN by the authors on 1 October 2026; they are in
+*         the replication archive deposited with the journal. SHA-256 in data/manual/raw_files.csv.
 * Output: data/intermediate/weather.dta
 *
-* Units: GHCN-Daily PRCP in tenths of mm, TMAX/TMIN/TAVG in tenths of degrees C.
-*        GSOD temperatures in degrees F (9999.9 = missing), PRCP in inches (99.99 = missing).
-* Rule : each variable is taken from the first source that reports it, in the order
-*        GHCN Observatorio -> GHCN Aeroparque -> GSOD Aeroparque -> GSOD Observatorio.
-*        Days with no precipitation report are set to 0 and flagged (prcp_missing = 1); days with no
-*        temperature report get the median of the series and are flagged (temp_missing = 1).
+* Stations: 87585 BUENOS AIRES OBSERVATORIO (Villa Ortuzar; single source for the controls) and
+*           87582 AEROPARQUE AERO (riverfront; exported as *_aero for the robustness check).
+* Conventions (LEAME sheets inside the archives): 'S/D' = missing; in PRECIP an EMPTY cell means
+* no precipitation (0 mm) and a recorded 0 means traces below 0.1 mm; TMEDIA is the mean over the
+* synoptic hours. The rain day runs from 12 UTC of the stated date to 12 UTC of the next day, so
+* precipitation and the daily maximum carry the date of the local day on which they occurred.
 
 capture log close
 log using "$logs/04_weather.log", replace text
 
-* ---- GHCN-Daily ---------------------------------------------------------------
-foreach s in obs aero {
-    if "`s'" == "obs"  local file "ghcnd_AR000875850_BuenosAiresObservatorio.csv"
-    if "`s'" == "aero" local file "ghcnd_ARM00087582_Aeroparque.csv"
-    import delimited using "$raw/weather/`file'", varnames(1) stringcols(_all) clear
-    rename date date_str
-    gen date = date(date_str, "YMD")
-    gen double prcp_`s' = real(prcp) / 10
-    gen double tmax_`s' = real(tmax) / 10
-    gen double tmin_`s' = real(tmin) / 10
-    gen double tavg_`s' = real(tavg) / 10
-    keep date prcp_`s' tmax_`s' tmin_`s' tavg_`s'
-    keep if inrange(date, td(01jan2019), td(31dec2023))
-    tempfile ghcn_`s'
-    save `ghcn_`s''
+* ---- extract the archives if the extracted files are not already present ------------------------
+capture confirm file "$raw/weather/smn_datos_meteorologicos_desde_2021.lst"
+if _rc {
+    cd "$raw/weather"
+    unzipfile "Datos-diarios-2021-2026-01102026.zip", replace
+    cd "$root"
+}
+capture confirm file "$raw/weather/smn_datos_meteorologicos_1991_2020.xlsx"
+if _rc {
+    * Windows 10+ bsdtar reads RAR5 archives; on other systems extract the RAR manually.
+    shell tar -xf "$raw/weather/smn_datos_meteorologicos_1991_2020.rar" -C "$raw/weather"
+}
+capture confirm file "$raw/weather/smn_datos_meteorologicos_1991_2020.xlsx"
+if _rc {
+    display as error "extract smn_datos_meteorologicos_1991_2020.xlsx from the RAR into data/raw/weather first"
+    exit 601
 }
 
-* ---- GSOD -------------------------------------------------------------------------
-foreach s in obs aero {
-    if "`s'" == "obs"  local id "87585099999"
-    if "`s'" == "aero" local id "87582099999"
-    clear
-    tempfile gsod_`s'
-    forvalues y = 2019/2023 {
-        import delimited using "$raw/weather/gsod_`id'_`y'.csv", varnames(1) stringcols(_all) clear
-        capture append using `gsod_`s''
-        save `gsod_`s'', replace
-    }
-    rename date date_str
-    gen date = date(date_str, "YMD")
-    gen double temp_f = real(temp)
-    gen double max_f = real(max)
-    gen double min_f = real(min)
-    gen double prcp_in = real(prcp)
-    foreach v in temp_f max_f min_f {
-        replace `v' = . if `v' > 9999
-    }
-    replace prcp_in = . if prcp_in > 99
-    gen double prcp_gsod_`s' = prcp_in * 25.4
-    gen double tavg_gsod_`s' = (temp_f - 32) * 5 / 9
-    gen double tmax_gsod_`s' = (max_f - 32) * 5 / 9
-    gen double tmin_gsod_`s' = (min_f - 32) * 5 / 9
-    keep date prcp_gsod_`s' tavg_gsod_`s' tmax_gsod_`s' tmin_gsod_`s'
-    save `gsod_`s'', replace
+* ---- helpers: S/D -> missing; PRECIP blank -> 0 --------------------------------------------------
+* (written inline below because the columns arrive as string when any cell holds 'S/D' and as
+*  numeric otherwise, depending on the station mix of each file)
+
+* ---- 1991-2020 file (xlsx, first sheet), kept for 2019-2020 --------------------------------------
+set excelxlsxlargefile on      // the workbook is 72 MB, above Stata's default 40 MB guard
+import excel using "$raw/weather/smn_datos_meteorologicos_1991_2020.xlsx", firstrow clear
+keep if inlist(NRO_OMM, 87582, 87585)
+display "rows for the two city stations, 1991-2020 file: " _N
+
+* FECHA arrives as a Stata date or datetime depending on the Excel cell format
+capture confirm string variable FECHA
+if !_rc gen date = date(substr(FECHA, 1, 10), "YMD")
+else gen date = cond(FECHA > 1e8, dofc(FECHA), FECHA)
+format date %td
+keep if year(date) >= 2019
+
+foreach v in TMAX TMIN TMEDIA {
+    capture confirm string variable `v'
+    if !_rc gen double x_`v' = real(trim(`v'))        // 'S/D' and blanks -> missing
+    else gen double x_`v' = `v'
 }
-
-* ---- combine on the full calendar ----------------------------------------------------
-use date using "$inter/calendar.dta", clear
-merge 1:1 date using `ghcn_obs', nogenerate keep(master match)
-merge 1:1 date using `ghcn_aero', nogenerate keep(master match)
-merge 1:1 date using `gsod_aero', nogenerate keep(master match)
-merge 1:1 date using `gsod_obs', nogenerate keep(master match)
-
-foreach v in prcp tmax tmin tavg {
-    gen double `v' = `v'_obs
-    gen `v'_source = "`v'_obs" if !missing(`v'_obs)
-    foreach s in aero gsod_aero gsod_obs {
-        replace `v'_source = "`v'_`s'" if missing(`v') & !missing(`v'_`s')
-        replace `v' = `v'_`s' if missing(`v')
-    }
+capture confirm string variable PRECIP
+if !_rc {
+    gen double x_PRECIP = real(trim(PRECIP)) if trim(PRECIP) != "" & trim(PRECIP) != "S/D"
+    replace x_PRECIP = 0 if trim(PRECIP) == ""        // empty cell = no precipitation (LEAME)
 }
-rename prcp prcp_mm
-rename tmax tmax_c
-rename tmin tmin_c
-rename tavg tavg_c
+else gen double x_PRECIP = cond(missing(PRECIP), 0, PRECIP)
+keep NRO_OMM date x_*
+rename (NRO_OMM x_TMAX x_TMIN x_TMEDIA x_PRECIP) (station tmax tmin tavg prcp)
+tempfile hist
+save `hist'
 
-* missing precipitation: set to zero and flag
-gen prcp_missing = missing(prcp_mm)
-replace prcp_mm = 0 if prcp_missing == 1
+* ---- file from 2021 (.lst, tab-separated; repeats its header and blank lines mid-file) -----------
+import delimited using "$raw/weather/smn_datos_meteorologicos_desde_2021.lst", delimiter(tab) ///
+    varnames(1) stringcols(_all) encoding("latin1") clear
+gen long station = real(trim(nro_omm))
+keep if inlist(station, 87582, 87585)
+gen date = date(trim(fecha), "DMY")
+format date %td
+keep if date <= td(31dec2023)
+foreach v in tmax tmin tmedia {
+    gen double x_`v' = real(trim(`v'))                // 'S/D' and blanks -> missing
+}
+gen double x_prcp = real(trim(precip)) if trim(precip) != "" & trim(precip) != "S/D"
+replace x_prcp = 0 if trim(precip) == ""              // empty field = no precipitation (LEAME)
+keep station date x_*
+rename (x_tmax x_tmin x_tmedia x_prcp) (tmax tmin tavg prcp)
+append using `hist'
+isid station date
+display "station-days 2019-2023, both stations: " _N
+
+* ---- completeness on the full calendar -----------------------------------------------------------
+* every calendar day must be present with every variable for the Observatorio; Aeroparque is the
+* robustness gauge and only warns
+preserve
+keep if station == 87585
+merge 1:1 date using "$inter/calendar.dta", keep(match using) nogenerate
+keep date tmax tmin tavg prcp
+assert _N == 1826                                      // one row per calendar day 2019-2023
+quietly count if missing(tmax) | missing(tmin) | missing(tavg) | missing(prcp)
+if r(N) > 0 {
+    display as error "SMN Observatorio has " r(N) " incomplete day(s); the construction assumes none"
+    exit 459
+}
+assert tmin <= tmax
+rename (prcp tmax tmin tavg) (prcp_mm tmax_c tmin_c tavg_c)
+gen prcp_source = "smn_obs"
+gen tmax_source = "smn_obs"
+gen tmin_source = "smn_obs"
+gen tavg_source = "smn_obs"
 gen rain_day = prcp_mm >= 1
 gen heavy_rain_day = prcp_mm >= 10
+gen prcp_missing = 0                                   // the SMN series is complete: identically 0
+gen temp_missing = 0
+keep date prcp_mm prcp_source tmax_c tmax_source tmin_c tmin_source tavg_c tavg_source ///
+     rain_day heavy_rain_day prcp_missing temp_missing
+tempfile obs
+save `obs'
+restore
 
-* missing temperature: median of the series and flag
-gen temp_missing = missing(tmax_c) | missing(tmin_c) | missing(tavg_c)
-foreach v in tmax_c tmin_c tavg_c {
-    summarize `v', detail
-    replace `v' = r(p50) if missing(`v')
-}
-
-keep date prcp_mm prcp_source tmax_c tmax_source tmin_c tavg_c rain_day heavy_rain_day ///
-     prcp_missing temp_missing
+keep if station == 87582
+quietly count if missing(tmax) | missing(tmin) | missing(tavg) | missing(prcp)
+if r(N) > 0 display as error "warning: SMN Aeroparque (robustness gauge) has " r(N) " incomplete day(s)"
+rename (prcp tmax tmin tavg) (prcp_mm_aero tmax_c_aero tmin_c_aero tavg_c_aero)
+gen rain_day_aero = prcp_mm_aero >= 1
+keep date prcp_mm_aero tmax_c_aero tmin_c_aero tavg_c_aero rain_day_aero
+merge 1:1 date using `obs', assert(match) nogenerate
+sort date
 format date %td
 compress
 save "$inter/weather.dta", replace
 
-* checks: the analysis window (+/- 8 weeks around the reform)
-count if prcp_missing == 1 & abs(date - $policy) <= 56
-count if temp_missing == 1 & abs(date - $policy) <= 56
-tab prcp_source, missing
+* ---- checks --------------------------------------------------------------------------------------
+count
+summarize prcp_mm tmax_c tavg_c
+correlate tmax_c tmax_c_aero
+correlate prcp_mm prcp_mm_aero
+count if rain_day != rain_day_aero
+display "days on which the two gauges disagree on rain_day (>= 1 mm), 2019-2023: " r(N)
+count if abs(date - $policy) <= 56 & rain_day == 1
+display "rain days inside the +/- 8 week window (Observatorio): " r(N)
 
 log close

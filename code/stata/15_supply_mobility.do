@@ -13,7 +13,7 @@
 capture log close
 log using "$logs/15_supply_mobility.log", replace text
 
-local weather "prcp_mm rain_day tmax_c c.tmax_c#c.tmax_c prcp_missing temp_missing"
+local weather "prcp_mm rain_day tmax_c c.tmax_c#c.tmax_c"   // SMN weather is complete (CAF-007): the missing-day indicators are identically zero and leave the controls
 
 do "$code/sample.do" 13mar2021 56
 merge 1:1 date using "$inter/station_supply.dta", keep(master match) nogenerate

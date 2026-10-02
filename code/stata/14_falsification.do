@@ -16,7 +16,7 @@
 capture log close
 log using "$logs/14_falsification.log", replace text
 
-local weather "prcp_mm rain_day tmax_c c.tmax_c#c.tmax_c prcp_missing temp_missing"
+local weather "prcp_mm rain_day tmax_c c.tmax_c#c.tmax_c"   // SMN weather is complete (CAF-007): the missing-day indicators are identically zero and leave the controls
 
 * the preferred estimate, the benchmark for every placebo
 do "$code/sample.do" 13mar2021 56

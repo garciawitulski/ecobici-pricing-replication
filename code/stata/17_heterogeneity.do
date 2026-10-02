@@ -21,11 +21,11 @@
 capture log close
 log using "$logs/17_heterogeneity.log", replace text
 
-local weather "prcp_mm rain_day tmax_c c.tmax_c#c.tmax_c prcp_missing temp_missing"
+local weather "prcp_mm rain_day tmax_c c.tmax_c#c.tmax_c"   // SMN weather is complete (CAF-007): the missing-day indicators are identically zero and leave the controls
 
 * the estimation sample (106 days) and its calendar variables
 do "$code/sample.do" 13mar2021 56
-keep date tt wk week dow weekend post wknd_post prcp_mm rain_day tmax_c prcp_missing temp_missing ///
+keep date tt wk week dow weekend post wknd_post prcp_mm rain_day tmax_c ///
     n_trips n_trips_female n_trips_male
 tempfile days
 save `days'
@@ -117,12 +117,12 @@ foreach d in sex profile {
 * joint test of equal effects across the four age groups: stacked group x day regression,
 * Driscoll-Kraay standard errors
 preserve
-keep date tt wk dow wknd_post prcp_mm rain_day tmax_c prcp_missing temp_missing log_trips_age*
+keep date tt wk dow wknd_post prcp_mm rain_day tmax_c log_trips_age*
 reshape long log_trips_age, i(date) j(grp)
 gen tmax_sq = tmax_c^2
 forvalues g = 1/4 {
     gen treat_g`g' = wknd_post * (grp == `g')
-    foreach v in prcp_mm rain_day tmax_c tmax_sq prcp_missing temp_missing {
+    foreach v in prcp_mm rain_day tmax_c tmax_sq {
         gen `v'_g`g' = `v' * (grp == `g')
     }
 }
@@ -131,8 +131,7 @@ egen grp_dow = group(grp dow)
 quietly tab grp_wk, generate(gw_)
 quietly tab grp_dow, generate(gd_)
 xtset grp tt
-xtscc log_trips_age treat_g* prcp_mm_g* rain_day_g* tmax_c_g* tmax_sq_g* prcp_missing_g* ///
-    temp_missing_g* gw_* gd_*, lag(14)
+xtscc log_trips_age treat_g* prcp_mm_g* rain_day_g* tmax_c_g* tmax_sq_g* gw_* gd_*, lag(14)
 test treat_g1 = treat_g2 = treat_g3 = treat_g4
 local F_age = r(F)
 local p_age = r(p)

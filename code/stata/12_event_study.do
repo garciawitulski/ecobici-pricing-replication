@@ -19,7 +19,7 @@
 capture log close
 log using "$logs/12_event_study.log", replace text
 
-local weather "prcp_mm rain_day tmax_c c.tmax_c#c.tmax_c prcp_missing temp_missing"
+local weather "prcp_mm rain_day tmax_c c.tmax_c#c.tmax_c"   // SMN weather is complete (CAF-007): the missing-day indicators are identically zero and leave the controls
 
 * 95th percentile of daily precipitation, 2019-2023 (days with a report), R's default quantile rule
 use "$analysis/ecobici_daily_2019_2023.dta", clear
@@ -156,7 +156,7 @@ file close tab
 * =============================================================================================
 do "$code/sample.do" 13mar2021 56
 gen tmax_sq = tmax_c^2
-foreach v in prcp_mm rain_day tmax_c tmax_sq prcp_missing temp_missing {
+foreach v in prcp_mm rain_day tmax_c tmax_sq {
     gen wx_`v' = weekend * `v'
 }
 

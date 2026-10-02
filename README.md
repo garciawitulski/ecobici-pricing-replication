@@ -16,7 +16,7 @@ Data preparation, estimation and tables are written in **Stata** (`main.do`); fi
 
 ## Data availability
 
-All data are public and were obtained from the sources below between 11 and 16 September 2026. The
+All data are public and were obtained from the sources below between 11 and 16 September 2026, except the SMN weather files, downloaded on 1 October 2026. The
 authors had legitimate access to all of them, and all may be redistributed under their licences. The
 raw files (about 1.2 GB) are not stored in this GitHub repository: `code/stata/01_download_raw.do`
 downloads them from the sources. The copies used for the
@@ -29,7 +29,7 @@ paper are included in the replication archive deposited with the journal.
 | Ecobici stations (dock capacity) | GCBA, Buenos Aires Data | `stations/nuevas-estaciones-bicicletas-publicas.geojson` | CC BY 2.5 AR |
 | Subte (subway) turnstile entries, 2021 | SBASE, via Buenos Aires Data | `public_transport/molinetes-2021.zip` | CC BY 2.5 AR |
 | City perimeter, comunas, subway and railway stations | GCBA, Buenos Aires Data | `geography/*.geojson` | CC BY 2.5 AR |
-| Daily weather, GHCN-Daily and GSOD | NOAA National Centers for Environmental Information | `weather/*.csv` | Public domain (U.S. Government) |
+| Daily station weather, 1991–2020 and from 2021 | Servicio Meteorológico Nacional (SMN), Argentina | `weather/smn_datos_meteorologicos_1991_2020.rar`, `weather/Datos-diarios-2021-2026-01102026.zip` | SMN open data, attribution required |
 | COVID-19 Community Mobility Reports | Google LLC | `mobility/Region_Mobility_Report_CSVs.zip` | Google terms of use (free to use, with attribution) |
 | National holidays, 2019–2023 | Ministerio del Interior (argentina.gob.ar, archived by the Internet Archive); Boletín Oficial (Decreto 842/2022) | `holidays/*.html` | Public official documents |
 
@@ -54,17 +54,20 @@ information is used.
   `reghdfe` 6.13.1, `ftools` 2.50.0, `require`, `ppmlhdfe` 2.3.3, `honestdid` 1.3.0, `xtscc` 1.4.
 - **R** 4.6.1 (tested) with `data.table` 1.18.4, `ggplot2` 4.0.3, `patchwork` 1.3.2 and `sf` 1.1.1.
 - About 8 GB of memory and 5 GB of free disk space. On a laptop with a 4-core processor:
-  `03_trips.do` about 15 minutes, `13_parallel_trends.do` about 45 minutes, the rest about 20 minutes;
+  `03_trips.do` about 15 minutes, `04_weather.do` a few minutes (it imports a 992,000-row Excel sheet), `13_parallel_trends.do` about 45 minutes, the rest about 20 minutes;
   the figures about 1 minute.
 - Random numbers: the seed is 20210313 (wild bootstrap in `11_main.do`, simulated benchmarks in
   `13_parallel_trends.do`).
 
 ## Instructions
 
-1. Open `main.do`, set `global root` to the folder of this repository, and run it **from the Stata
+1. Extract `smn_datos_meteorologicos_1991_2020.xlsx` from the RAR archive into `data/raw/weather`
+   (on Windows 10+, `tar -xf` in a terminal reads RAR5; `04_weather.do` also attempts this). The
+   `.lst` file is unzipped automatically.
+2. Open `main.do`, set `global root` to the folder of this repository, and run it **from the Stata
    window** (the download step may call `curl` through the shell, which Stata ignores in batch mode).
    If `data/raw` already holds the raw files, the download step skips them.
-2. Run `main_figures.R` with the repository folder as working directory (`Rscript main_figures.R`).
+3. Run `main_figures.R` with the repository folder as working directory (`Rscript main_figures.R`).
 
 Tables are written to `output/tables` as LaTeX fragments that the manuscript includes directly;
 estimates behind the figures to `output/estimates`; figures to `output/figures` (PDF and PNG); a log
@@ -79,7 +82,7 @@ of every do-file to `output/logs`.
 | `code/stata/01_download_raw.do` | Downloads the raw data |
 | `code/stata/02_calendar.do` | Calendar 2019–2023 with holidays |
 | `code/stata/03_trips.do` | Trip records → one file per year and the daily trip outcomes |
-| `code/stata/04_weather.do` | Daily weather from four NOAA series |
+| `code/stata/04_weather.do` | Daily weather from the SMN station records (Observatorio single source; Aeroparque as robustness) |
 | `code/stata/05_subte_mobility.do` | Subte entries (resolving the mixed date formats of the source) and Google mobility |
 | `code/stata/06_daily_panel.do` | The daily analysis dataset and the primary sample |
 | `code/stata/07_users.do` | User registry and the user × day panel |
@@ -138,10 +141,9 @@ All accessed in September 2026.
   https://data.buenosaires.gob.ar/dataset/subte-viajes-molinetes
 - Gobierno de la Ciudad de Buenos Aires. *Perímetro*, *Comunas*, *Estaciones de subte*, *Estaciones de
   ferrocarril*. Buenos Aires Data. https://data.buenosaires.gob.ar
-- Menne, M. J., et al. Global Historical Climatology Network – Daily (GHCN-Daily), Version 3.
-  NOAA National Centers for Environmental Information. doi:10.7289/V5D21VHZ
-- NOAA National Centers for Environmental Information. Global Surface Summary of the Day (GSOD).
-  https://www.ncei.noaa.gov/data/global-summary-of-the-day/
+- Servicio Meteorológico Nacional (Argentina). *Datos meteorológicos diarios por estación*,
+  1991–2020 and from 2021; stations 87585 (Buenos Aires Observatorio) and 87582 (Aeroparque Aero).
+  https://www.smn.gob.ar/descarga-de-datos (accessed 1 October 2026).
 - Google LLC. *Google COVID-19 Community Mobility Reports*. https://www.google.com/covid19/mobility/
 - Ministerio del Interior, República Argentina. *Feriados nacionales* 2019–2023. argentina.gob.ar,
   archived by the Internet Archive; Decreto 842/2022, Boletín Oficial de la República Argentina.

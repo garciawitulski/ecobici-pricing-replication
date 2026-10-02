@@ -27,7 +27,7 @@
 capture log close
 log using "$logs/13_parallel_trends.log", replace text
 
-local weather "prcp_mm rain_day tmax_c c.tmax_c#c.tmax_c prcp_missing temp_missing"
+local weather "prcp_mm rain_day tmax_c c.tmax_c#c.tmax_c"   // SMN weather is complete (CAF-007): the missing-day indicators are identically zero and leave the controls
 
 * the five targets, as weights on the 8 post-reform coefficients (weeks 0 to 7)
 matrix L1 = (1, 0, 0, 0, 0, 0, 0, 0)
@@ -48,7 +48,7 @@ foreach variant in calendar weather wxint {
     if "`variant'" != "calendar" local controls "`weather'"
     if "`variant'" == "wxint" {
         gen tmax_sq = tmax_c^2
-        foreach v in prcp_mm rain_day tmax_c tmax_sq prcp_missing temp_missing {
+        foreach v in prcp_mm rain_day tmax_c tmax_sq {
             gen wx_`v' = weekend * `v'
         }
         local controls "`controls' wx_*"

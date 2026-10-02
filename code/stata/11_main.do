@@ -12,7 +12,7 @@
 capture log close
 log using "$logs/11_main.log", replace text
 
-local weather "prcp_mm rain_day tmax_c c.tmax_c#c.tmax_c prcp_missing temp_missing"
+local weather "prcp_mm rain_day tmax_c c.tmax_c#c.tmax_c"   // SMN weather is complete (CAF-007): the missing-day indicators are identically zero and leave the controls
 
 * =============================================================================================
 * Table 1. Descriptive statistics, reform window
@@ -151,6 +151,13 @@ display "Wild cluster bootstrap: `exceed' of `reps' replications exceed |t|; p =
 newey log1p_trips wknd_post i.week i.dow `weather', lag(14)
 ppmlhdfe n_trips wknd_post `weather', absorb(week dow) vce(robust)
 display "Poisson: " %8.4f _b[wknd_post] " (" %5.1f 100 * (exp(_b[wknd_post]) - 1) "%)"
+
+* Robustness to the weather gauge (quoted in the appendix): Aeroparque records in place of the
+* Observatorio, same specification
+newey log_trips wknd_post i.week i.dow prcp_mm_aero rain_day_aero tmax_c_aero ///
+    c.tmax_c_aero#c.tmax_c_aero, lag(14)
+display "Aeroparque gauge: " %8.4f _b[wknd_post] " (NW-14 SE " %6.4f _se[wknd_post] "), " ///
+    %5.1f 100 * (exp(_b[wknd_post]) - 1) "%"
 
 * Panel B: alternative windows, specification (3)
 foreach h in 28 42 84 112 {
