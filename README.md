@@ -16,7 +16,7 @@ Data preparation, estimation and tables are written in **Stata** (`main.do`); fi
 
 ## Data availability
 
-All data are public and were obtained from the sources below between 11 and 16 September 2026, except the SMN weather files, downloaded on 1 October 2026. The
+All data are public and were obtained from the sources below between 11 and 16 September 2026, except the SMN weather files, downloaded on 1 October 2026 from the Datos Abiertos section at https://www.smn.gob.ar/descarga-de-datos. The SMN confirmed to the authors that the from-2021 dataset is updated monthly as new observations complete quality control, so later downloads may extend or revise it; the copies used for the paper are the ones whose SHA-256 checksums are recorded in `data/manual/raw_files.csv`. The
 authors had legitimate access to all of them, and all may be redistributed under their licences. The
 raw files (about 1.2 GB) are not stored in this GitHub repository: `code/stata/01_download_raw.do`
 downloads them from the sources. The copies used for the
