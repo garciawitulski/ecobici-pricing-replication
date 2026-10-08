@@ -152,7 +152,7 @@ file write tab "\bottomrule" _n "\end{tabular*}" _n
 file close tab
 
 * =============================================================================================
-* Weekend-specific weather coefficients (Table A1b)
+* Weekend-specific weather coefficients (Table A1, Panel B)
 * =============================================================================================
 do "$code/sample.do" 13mar2021 56
 gen tmax_sq = tmax_c^2
@@ -202,7 +202,7 @@ matrix g = A * X' * W * bpre
 local slope_I = g[2, 1]
 local slope_t_I = g[2, 1] / sqrt(A[2, 2])
 
-* ---- write Table A1b ----------------------------------------------------------------------------------
+* ---- write Table A1, Panel B ----------------------------------------------------------------------------------
 file open tab using "$tables/tableA1b_weather.tex", write replace
 file write tab "\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{6.60cm}*{2}{>{\centering\arraybackslash}p{3.60cm}}@{}}" _n
 file write tab "\toprule" _n " & Common weather coefficients & Weekend-specific weather coefficients \\" _n "\midrule" _n

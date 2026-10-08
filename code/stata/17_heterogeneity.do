@@ -1,5 +1,5 @@
 * 17_heterogeneity.do
-* Heterogeneity by rider sex and age (Table A10) and by station commuting profile (Table A11).
+* Heterogeneity by rider sex and age (Table A9) and by station commuting profile (Table A10).
 *
 * Each group series is a daily count of trips; the preferred specification is estimated separately for
 * each group (Newey-West, lag 14). Differences between two groups are estimated on the daily contrast
@@ -16,7 +16,7 @@
 *
 * Input : data/analysis/ecobici_daily_2019_2023.dta, data/intermediate/trips_2021.dta, user_day.dta,
 *         registry.dta, station_profile.dta, station_distances.dta
-* Output: output/tables/tableA10_heterogeneity.tex, tableA11_spatial.tex
+* Output: output/tables/tableA9_heterogeneity.tex, tableA10_spatial.tex
 
 capture log close
 log using "$logs/17_heterogeneity.log", replace text
@@ -169,9 +169,9 @@ local p_sl = 2 * ttail(e(df_r), abs(_b[wknd_post_less] / _se[wknd_post_less]))
 restore
 
 * =============================================================================================
-* Table A10
+* Table A9
 * =============================================================================================
-file open tab using "$tables/tableA10_heterogeneity.tex", write replace
+file open tab using "$tables/tableA9_heterogeneity.tex", write replace
 file write tab "\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccc@{}}" _n "\toprule" _n
 file write tab " & \multicolumn{2}{c}{Preferred specification} & \multicolumn{2}{c}{Calendar controls only} \\" _n
 file write tab "\cmidrule(lr){2-3}\cmidrule(lr){4-5}" _n
@@ -217,7 +217,7 @@ file write tab "\bottomrule" _n "\end{tabular*}" _n
 file close tab
 
 * =============================================================================================
-* Table A11
+* Table A10
 * =============================================================================================
 use "$inter/station_profile.dta", clear
 correlate commuter_score weekend_share
@@ -243,7 +243,7 @@ forvalues g = 0/1 {
     local w500`g' = string(r(mean), "%4.2f")
 }
 
-file open tab using "$tables/tableA11_spatial.tex", write replace
+file open tab using "$tables/tableA10_spatial.tex", write replace
 file write tab "\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{7.00cm}*{2}{>{\centering\arraybackslash}p{3.30cm}}@{}}" _n
 file write tab "\toprule" _n " & More commuter-oriented & Less commuter-oriented \\" _n "\midrule" _n
 file write tab "\multicolumn{3}{@{}l}{\textit{Panel A. Pre-reform classification inputs, weekday trips}} \\" _n

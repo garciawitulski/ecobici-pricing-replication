@@ -1,6 +1,6 @@
 # fig6_persistence.R
 # Figure 6. Weekend-to-weekday ratio of daily Ecobici trips, 2019 to 2023. Grey points are weekly
-# ratios; black segments are the period means of Table A12.
+# ratios; black segments are the period means of Table A11.
 # Input : output/estimates/weekly_ratio.csv, ratio_by_period.csv (18_persistence.do)
 # Output: output/figures/fig6_persistence.pdf / .png
 

@@ -13,14 +13,13 @@
 *                     day type in both periods (descriptive: it conditions on post-reform behaviour)
 *   Table 4, Panel C  accounting decomposition E[Y] = P(any ride) x E[Y | any ride], in logs:
 *                     DiD log E[Y] = DiD log P(any ride) + DiD log E[Y | any ride]
-*   Table A9          non-use and return among pre-reform riders (full eight-week windows)
-*   Table A14         the same decomposition for a holdout cohort (membership on weeks -16 to -9) and
+*   Table A13         the same decomposition for a holdout cohort (membership on weeks -16 to -9) and
 *                     for placebo cohorts at the 55 free-access Saturday thresholds of 14_falsification.do
 *   In the text       residency (DNI) field of the registry; Poisson with an offset for days at risk
 *
 * Input : data/intermediate/user_day.dta, calendar.dta, registry.dta, output/estimates/placebo_distribution.csv
-* Output: output/tables/table4_margins.tex, tableA9_cohort_followup.tex, tableA14_cohort_robustness.tex
-*         output/estimates/cohort_cells.csv, decomposition.csv (Figure 5), placebo_cohorts.csv (Figure 4b)
+* Output: output/tables/table4_margins.tex, tableA13_cohort_robustness.tex
+*         output/estimates/cohort_cells.csv (Table 4 cells), decomposition.csv (Figure 5), placebo_cohorts.csv (Figure 4b)
 
 capture log close
 log using "$logs/16_cohort.log", replace text
@@ -218,87 +217,7 @@ ppmlhdfe n_trips wknd_post, absorb(uid weekend post) offset(log_days) vce(cluste
 display "Poisson with offset, original windows: " %7.4f _b[wknd_post]
 
 * =============================================================================================
-* 3. Non-use and return among pre-reform riders (Table A9), full eight-week windows
-* =============================================================================================
-use `uday', clear
-gen byte one = 1
-* riders of each day type before the reform
-preserve
-keep if post == 0
-keep uid weekend
-duplicates drop
-tempfile pre_riders
-save `pre_riders'
-restore
-* any ride on the same day type after the reform
-preserve
-keep if post == 1
-keep uid weekend
-duplicates drop
-gen rode_after_same = 1
-tempfile after_same
-save `after_same'
-restore
-* any ride on any day after the reform
-keep if post == 1
-keep uid
-duplicates drop
-gen rode_after_any = 1
-tempfile after_any
-save `after_any'
-* weekend ride between 9 May and 31 December 2021
-use "$inter/user_day.dta", clear
-keep if inrange(date, `P' + 57, td(31dec2021)) & holiday_any == 0 & weekend == 1
-keep uid
-duplicates drop
-gen returned = 1
-tempfile returned
-save `returned'
-
-use `pre_riders', clear
-merge 1:1 uid weekend using `after_same', keep(master match) nogenerate
-merge m:1 uid using `after_any', keep(master match) nogenerate
-merge m:1 uid using `returned', keep(master match) nogenerate
-foreach v in rode_after_same rode_after_any returned {
-    replace `v' = 0 if missing(`v')
-}
-gen no_same = rode_after_same == 0
-gen no_any = rode_after_any == 0
-collapse (count) riders = uid (mean) no_same no_any returned, by(weekend)
-list, noobs
-forvalues w = 0/1 {
-    foreach v in riders no_same no_any returned {
-        summarize `v' if weekend == `w', meanonly
-        local `v'`w' = r(mean)
-    }
-}
-local both = `riders1' + `riders0' - `cohort_n'
-
-file open tab using "$tables/tableA9_cohort_followup.tex", write replace
-file write tab "\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{7.60cm}*{2}{>{\centering\arraybackslash}p{3.00cm}}@{}}" _n
-file write tab "\toprule" _n " & Pre-reform weekend riders & Pre-reform weekday riders \\" _n "\midrule" _n
-fmtnum `riders1' 0
-local c1 "`r(s)'"
-fmtnum `riders0' 0
-file write tab "Cohort members & `c1' & `r(s)' \\" _n
-foreach v in no_same no_any returned {
-    if "`v'" == "no_same"  local lab "No ride on the same day type in the next eight weeks (\%)"
-    if "`v'" == "no_any"   local lab "No ride on any day in the next eight weeks (\%)"
-    if "`v'" == "returned" local lab "Weekend ride between 9 May and 31 December 2021 (\%)"
-    * shares rounded to four decimals first, as in the original tables
-    local s1 = string(100 * round(``v'1', 0.0001), "%5.1f")
-    local s0 = string(100 * round(``v'0', 0.0001), "%5.1f")
-    file write tab "`lab' & `s1' & `s0' \\" _n
-}
-fmtnum `both' 0
-local c1 "`r(s)'"
-fmtnum `cohort_n' 0
-file write tab "\midrule" _n "Members of both groups & \multicolumn{2}{c}{`c1' of `r(s)'} \\" _n
-file write tab "\bottomrule" _n "\end{tabular*}" _n
-file close tab
-
-* =============================================================================================
-* 4. Residency (DNI) field of the registry, frozen window (quoted in the text)
+* 3. Residency (DNI) field of the registry, frozen window (quoted in the text)
 * =============================================================================================
 use `uday', clear
 merge m:1 uid using "$inter/registry.dta", keep(master match) nogenerate keepusing(dni)
@@ -321,7 +240,7 @@ forvalues w = 0/1 {
 display "Differential change in the non-DNI share (percentage points): " %6.3f (`s11' - `s10') - (`s01' - `s00')
 
 * =============================================================================================
-* 5. Holdout and placebo cohorts (Table A14, Figure 4b)
+* 4. Holdout and placebo cohorts (Table A13, Figure 4b)
 * =============================================================================================
 * For each threshold s: members are users with a trip on a non-holiday day of the membership window;
 * outcomes are measured over the 8 weeks either side of s (s excluded), keeping in each period the same
@@ -404,8 +323,8 @@ rename thr threshold
 export delimited threshold span participation total using "$estimates/placebo_cohorts.csv", replace
 restore
 
-* ---- Table A14 ----------------------------------------------------------------------------------------
-file open tab using "$tables/tableA14_cohort_robustness.tex", write replace
+* ---- Table A13 ----------------------------------------------------------------------------------------
+file open tab using "$tables/tableA13_cohort_robustness.tex", write replace
 file write tab "\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{5.40cm}*{4}{>{\centering\arraybackslash}p{2.10cm}}@{}}" _n
 file write tab "\toprule" _n " & Cohort & Total & Participation & Participation share (\%) \\" _n "\midrule" _n
 file write tab "\multicolumn{5}{@{}l}{\textit{Panel A. Alternative cohort definitions, reform of 13 March 2021}} \\" _n

@@ -1,5 +1,5 @@
 * 18_persistence.do
-* Is the weekend-specific fall temporary or durable? (Table A12, Figure 6)
+* Is the weekend-specific fall temporary or durable? (Table A11, Figure 6)
 *
 * Panel A. One regression on every non-holiday day from the 2019 relaunch to 2023 (the reform day
 *   excluded) with Weekend x period terms for the first 8 post-reform weeks, the rest of 2021, 2022 and
@@ -11,7 +11,7 @@
 *   weekdays).
 *
 * Input : data/analysis/ecobici_daily_2019_2023.dta
-* Output: output/tables/tableA12_persistence.tex
+* Output: output/tables/tableA11_persistence.tex
 *         output/estimates/weekly_ratio.csv, output/estimates/ratio_by_period.csv (Figure 6)
 
 capture log close
@@ -74,8 +74,8 @@ format from to %tdCCYY-NN-DD
 export delimited using "$estimates/ratio_by_period.csv", replace
 list, noobs
 
-* ---- Table A12 ----------------------------------------------------------------------------------------
-file open tab using "$tables/tableA12_persistence.tex", write replace
+* ---- Table A11 ----------------------------------------------------------------------------------------
+file open tab using "$tables/tableA11_persistence.tex", write replace
 file write tab "\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{6.60cm}*{3}{>{\centering\arraybackslash}p{2.20cm}}@{}}" _n
 file write tab "\toprule" _n "Period & Estimate & Std.\ error & Implied change (\%) \\" _n "\midrule" _n
 file write tab "\multicolumn{4}{@{}l}{\textit{Panel A. Weekend \$\times\$ period estimates}} \\" _n

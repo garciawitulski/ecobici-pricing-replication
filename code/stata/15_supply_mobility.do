@@ -3,12 +3,12 @@
 *   Table A6   preferred specification with service-supply controls measured independently of weekend
 *              demand (60-day station roster, docks in service, cumulative station roster)
 *   Table A7   preferred specification applied to Google mobility and to Subte (subway) entries
-*   Table A13  preferred specification on the 200 stations that already operated before the reform
+*   Table A12  preferred specification on the 200 stations that already operated before the reform
 * Standard errors: Newey-West, lag 14.
 *
 * Input : data/analysis/ecobici_daily_2019_2023.dta, data/intermediate/station_supply.dta,
 *         data/intermediate/stable_network_daily.dta
-* Output: output/tables/tableA6_supply.tex, tableA7_mobility.tex, tableA13_stable_network.tex
+* Output: output/tables/tableA6_supply.tex, tableA7_mobility.tex, tableA12_stable_network.tex
 
 capture log close
 log using "$logs/15_supply_mobility.log", replace text
@@ -50,7 +50,7 @@ forvalues k = 1/4 {
 file write tab "\bottomrule" _n "\end{tabular*}" _n
 file close tab
 
-* ---- Table A13: the stable pre-reform network -------------------------------------------------------
+* ---- Table A12: the stable pre-reform network -------------------------------------------------------
 gen log_st_trips = ln(st_trips)
 gen log_st_users = ln(st_users)
 gen log_st_minutes = ln(st_minutes)
@@ -79,7 +79,7 @@ foreach p in 0 1 {
 count
 local ndays = r(N)
 
-file open tab using "$tables/tableA13_stable_network.tex", write replace
+file open tab using "$tables/tableA12_stable_network.tex", write replace
 file write tab "\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{4.60cm}*{4}{>{\centering\arraybackslash}p{2.30cm}}@{}}" _n
 file write tab "\toprule" _n " & \multicolumn{2}{c}{Stable network, 200 stations} & \multicolumn{2}{c}{Full network} \\" _n
 file write tab "\cmidrule(lr){2-3}\cmidrule(lr){4-5}" _n

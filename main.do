@@ -21,13 +21,13 @@ do "$code/08_stations.do"          // station supply, commuting profile, distanc
 
 * ---- 2. estimates and tables ----------------------------------------------------------------------
 do "$code/11_main.do"              // Tables 1 and 2
-do "$code/12_event_study.do"       // Tables A1 and A1b; Figures 3 and A1
+do "$code/12_event_study.do"       // Table A1, panels A and B; Figures 3 and A1
 do "$code/13_parallel_trends.do"   // Tables A2 and A3; Figure A2 (about 45 minutes)
 do "$code/14_falsification.do"     // Tables 3, A4, A5, A8; Figure 4a
-do "$code/15_supply_mobility.do"   // Tables A6, A7, A13
-do "$code/16_cohort.do"            // Tables 4, A9, A14; Figures 4b and 5
-do "$code/17_heterogeneity.do"     // Tables A10, A11
-do "$code/18_persistence.do"       // Table A12; Figure 6
-do "$code/19_spillover.do"         // Table A15
+do "$code/15_supply_mobility.do"   // Tables A6, A7, A12
+do "$code/16_cohort.do"            // Tables 4, A13; Figures 4b and 5
+do "$code/17_heterogeneity.do"     // Tables A9, A10
+do "$code/18_persistence.do"       // Table A11; Figure 6
+do "$code/19_spillover.do"         // Table A14
 
 display "Done. Tables are in output/tables, logs in output/logs. Now run main_figures.R."

@@ -96,7 +96,7 @@ erase "$tmp/supply.dta"
 list if inlist(date, td(15feb2021), td(12mar2021), td(13mar2021), td(15apr2021)), noobs
 
 * =============================================================================================
-* 2. Stable stations and the commuting profile (Appendix Table A11, Figure 2)
+* 2. Stable stations and the commuting profile (Appendix Table A10, Figure 2)
 * =============================================================================================
 use date weekend using "$analysis/ecobici_daily_primary.dta", clear
 keep if date < $policy
@@ -177,7 +177,7 @@ save "$inter/station_profile.dta", replace
 tab more_commuter
 
 * =============================================================================================
-* 3. Daily use of the stable network (Appendix Table A13)
+* 3. Daily use of the stable network (Appendix Table A12)
 * =============================================================================================
 use st_o uid dur_sec date using "$inter/trips_2021.dta", clear
 merge m:1 date using "$analysis/ecobici_daily_primary.dta", keep(match) nogenerate keepusing(date)

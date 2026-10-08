@@ -107,14 +107,14 @@ of every do-file to `output/logs`.
 | Figure 4 | `code/r/fig4_falsification.R` (from `14_falsification.do`, `16_cohort.do`) | `fig4_falsification.pdf` |
 | Figure 5 | `code/r/fig5_participation.R` (from `16_cohort.do`) | `fig5_participation.pdf` |
 | Figure 6 | `code/r/fig6_persistence.R` (from `18_persistence.do`) | `fig6_persistence.pdf` |
-| Table A1, A1b | `12_event_study.do` | `tableA1_pretrends.tex`, `tableA1b_weather.tex` |
+| Table A1, panels A and B | `12_event_study.do` | `tableA1_pretrends.tex`, `tableA1b_weather.tex` |
 | Table A2, A3 | `13_parallel_trends.do` | `tableA2_relative_magnitudes.tex`, `tableA3_outer_bounds.tex` |
 | Table A4, A5, A8 | `14_falsification.do` | `tableA4_placebo.tex`, `tableA5_falsification.tex`, `tableA8_outcomes.tex` |
-| Table A6, A7, A13 | `15_supply_mobility.do` | `tableA6_supply.tex`, `tableA7_mobility.tex`, `tableA13_stable_network.tex` |
-| Table A9, A14 | `16_cohort.do` | `tableA9_cohort_followup.tex`, `tableA14_cohort_robustness.tex` |
-| Table A10, A11 | `17_heterogeneity.do` | `tableA10_heterogeneity.tex`, `tableA11_spatial.tex` |
-| Table A12 | `18_persistence.do` | `tableA12_persistence.tex` |
-| Table A15 | `19_spillover.do` | `tableA15_weekday_spillover.tex` |
+| Table A6, A7, A12 | `15_supply_mobility.do` | `tableA6_supply.tex`, `tableA7_mobility.tex`, `tableA12_stable_network.tex` |
+| Table A13 | `16_cohort.do` | `tableA13_cohort_robustness.tex` |
+| Table A9, A10 | `17_heterogeneity.do` | `tableA9_heterogeneity.tex`, `tableA10_spatial.tex` |
+| Table A11 | `18_persistence.do` | `tableA11_persistence.tex` |
+| Table A14 | `19_spillover.do` | `tableA14_weekday_spillover.tex` |
 | Figure A1 | `code/r/figA1_event_sensitivity.R` (from `12_event_study.do`) | `figA1_event_sensitivity.pdf` |
 | Figure A2 | `code/r/figA2_sensitivity.R` (from `13_parallel_trends.do`) | `figA2_sensitivity.pdf` |
 

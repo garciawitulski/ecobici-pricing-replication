@@ -1,5 +1,5 @@
 * 19_spillover.do
-* Were weekdays really untreated? Diagnostics for displacement of trips onto weekdays (Table A15).
+* Were weekdays really untreated? Diagnostics for displacement of trips onto weekdays (Table A14).
 *
 * Panel A. Aggregate use at the threshold (local linear in event time, weather controls, Newey-West
 *   lag 14): the weekday-only discontinuity; the weekday discontinuity of the difference-in-
@@ -11,7 +11,7 @@
 *   threshold where access stayed free (16 January 2021) measures reversion to the mean alone.
 *
 * Input : data/analysis/ecobici_daily_2019_2023.dta, data/intermediate/user_day.dta, calendar.dta
-* Output: output/tables/tableA15_weekday_spillover.tex
+* Output: output/tables/tableA14_weekday_spillover.tex
 
 capture log close
 log using "$logs/19_spillover.log", replace text
@@ -112,8 +112,8 @@ foreach thr in 13mar2021 16jan2021 {
     local n_`name' = e(N)
 }
 
-* ---- Table A15 ---------------------------------------------------------------------------------------
-file open tab using "$tables/tableA15_weekday_spillover.tex", write replace
+* ---- Table A14 ---------------------------------------------------------------------------------------
+file open tab using "$tables/tableA14_weekday_spillover.tex", write replace
 file write tab "\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{8.00cm}*{3}{>{\centering\arraybackslash}p{2.30cm}}@{}}" _n
 file write tab "\toprule" _n " & Estimate & Implied change (\%) & Observations \\" _n "\midrule" _n
 file write tab "\multicolumn{4}{@{}l}{\textit{Panel A. Aggregate use at the threshold}} \\" _n

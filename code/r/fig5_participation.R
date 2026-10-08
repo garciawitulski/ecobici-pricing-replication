@@ -1,38 +1,17 @@
 # fig5_participation.R
-# Figure 5. Participation and the accounting decomposition in the cohort of pre-reform users.
-#   (a) probability of any ride, by day type, before and after the reform (windows of equal length);
-#   (b) the decomposition E[Y] = P(any ride) x E[Y | any ride] for trips, minutes ridden and active days.
-# Input : output/estimates/cohort_cells.csv, decomposition.csv (16_cohort.do)
+# Figure 5. Accounting decomposition in the cohort of pre-reform users.
+# The decomposition E[Y] = P(any ride) x E[Y | any ride] for trips, minutes ridden and active days.
+# Input : output/estimates/decomposition.csv (16_cohort.do)
 # Output: output/figures/fig5_participation.pdf / .png
 
-source("code/r/fig_theme.R")
-library(patchwork)
+source("code/r/fig_theme.R", encoding = "UTF-8")
 
-# ---- panel (a) ----------------------------------------------------------------------------------------
-cc <- fread("output/estimates/cohort_cells.csv")
-pa <- data.table(daytype = factor(ifelse(cc$weekend == 1, "Weekend", "Weekday"), levels = c("Weekday", "Weekend")),
-                 period = factor(ifelse(cc$post == 1, "After", "Before"), levels = c("Before", "After")),
-                 p_any = cc$p_any)
-
-p5a <- ggplot(pa, aes(period, p_any, group = daytype)) +
-  geom_line(aes(colour = daytype, linetype = daytype), linewidth = 0.6) +
-  geom_point(aes(colour = daytype, shape = daytype, fill = daytype), size = 2.3, stroke = 0.5) +
-  geom_text(data = pa[period == "Before"], aes(label = fmt_num(p_any, 3), colour = daytype),
-            hjust = 1.35, size = FIG_ANNOT, show.legend = FALSE) +
-  geom_text(data = pa[period == "After"], aes(label = fmt_num(p_any, 3), colour = daytype),
-            hjust = -0.35, size = FIG_ANNOT, show.legend = FALSE) +
-  geom_text(data = pa[period == "After"], aes(label = daytype, colour = daytype),
-            hjust = -0.35, vjust = -1.25, size = FIG_ANNOT, fontface = "bold", show.legend = FALSE) +
-  scale_colour_manual(values = COL_DAY) + scale_fill_manual(values = COL_DAY) +
-  scale_shape_manual(values = SHP_DAY) + scale_linetype_manual(values = LTY_DAY) +
-  scale_x_discrete(expand = expansion(add = 0.55)) +
-  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25), expand = c(0, 0), labels = lab_num(2)) +
-  labs(x = NULL, y = "Probability of any ride", title = "(a) Participation") +
-  theme_fig() + theme(legend.position = "none")
-
-# ---- panel (b): stacked bars, each ending at the total for that outcome -------------------------------
+# Stacked bars, each ending at the total for that outcome.
 dec <- fread("output/estimates/decomposition.csv")
 dec[, xi := match(outcome, c("trips", "minutes", "days"))]
+stopifnot(nrow(dec) == 3L, !anyNA(dec$xi), uniqueN(dec$xi) == 3L,
+          all(abs(dec$total - dec$participation - dec$intensity) < 1e-7),
+          all(abs(dec$share - dec$participation / dec$total) < 1e-7))
 dec[, outcome_lab := c("Trips", "Minutes\nridden", "Active\ndays")[xi]]
 bars <- rbind(dec[, .(xi, component = "Participation", value = participation, y_top = 0, y_bot = participation)],
               dec[, .(xi, component = "Intensity among active riders", value = intensity,
@@ -54,7 +33,11 @@ p5b <- ggplot(bars) +
   scale_colour_manual(values = c(Participation = "white", `Intensity among active riders` = "grey15")) +
   scale_x_continuous(breaks = 1:3, labels = dec[order(xi), outcome_lab], expand = expansion(add = 0.55)) +
   scale_y_continuous(limits = c(-1.15, 0.13), breaks = seq(-1, 0, 0.25), expand = c(0, 0), labels = lab_num(2)) +
-  labs(x = NULL, y = "Log points", fill = NULL, title = "(b) Accounting decomposition") +
+  labs(x = NULL, y = "Log points", fill = NULL) +
   theme_fig() + theme(legend.position = "bottom")
 
-save_fig(p5a + p5b + plot_layout(widths = c(1, 1)), "fig5_participation", FIG_W, 3.45)
+# Use the same vector and raster devices as the manuscript figure.
+ggsave("output/figures/fig5_participation.pdf", p5b, width = FIG_W, height = 3.3,
+       device = grDevices::cairo_pdf, bg = "white")
+ggsave("output/figures/fig5_participation.png", p5b, width = FIG_W, height = 3.3,
+       device = grDevices::png, dpi = 600, type = "cairo", bg = "white")
